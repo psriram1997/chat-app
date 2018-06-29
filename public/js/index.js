@@ -8,7 +8,20 @@ socket.on('disconnect',function(){
 });
 
 socket.on('newMessage', function(msg){
-    console.log('message',msg);
+    const liEl = $('<li></li>').text(`${msg.from} : ${msg.text}`);
+    $('#messageBox').append(liEl);
+});
+
+$('form').on('submit',(e) => {
+    e.preventDefault();
+    let text = e.target.elements.text.value
+    socket.emit('createMessage',{
+        from : 'User',
+        text : text
+    },()=>{
+
+    })
+    e.target.elements.text.value = '';
 });
 
 // socket.emit('createMessage',{
