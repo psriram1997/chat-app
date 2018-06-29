@@ -27,15 +27,17 @@ $('form').on('submit',function(e){
         from : 'User',
         text : text
     },function(){
-        console.log('message sent');
+        e.target.elements.text.value = '';
     })
-    e.target.elements.text.value = '';
+    
 });
 
-$('#locationButton').on('click',function(e){
+$('#location-button').on('click',function(e){
     if(!navigator.geolocation){
         return alert('Your browser doesn\'t support geo-location');
     }
+    e.target.disabled = true;
+    e.target.innerText = "sending location...";
     navigator.geolocation.getCurrentPosition(function(position){
         console.log(position.coords.latitude,position.coords.longitude);
         socket.emit('createLocationMessage',{
@@ -45,12 +47,13 @@ $('#locationButton').on('click',function(e){
         },function(){
             console.log('create location event fired')
         });
+        
+        e.target.disabled = false;
+        e.target.innerText = "send location";
     },function(){
         alert('unable to fetch geo location');
+        e.target.disabled = false;
+        e.target.innerText = "send location";
     })
 });
 
-// socket.emit('createMessage',{
-//     from : "client",
-//     text: "how do you do?"
-//  });
