@@ -8,12 +8,14 @@ socket.on('disconnect',function(){
 });
 
 socket.on('newMessage', function(msg){
-    const liEl = $('<li></li>').text(`${msg.from} : ${msg.text}`);
+    const formattedTime = moment(msg.createdAt).format('h:mm a');
+    const liEl = $('<li></li>').text(`${msg.from} ${formattedTime} : ${msg.text}`);
     $('#messageBox').append(liEl);
 });
 
 socket.on('newLocationMessage', function(msg){
-    const liEl = $('<li></li>').text(`${msg.from}`);
+    const formattedTime = moment(msg.createdAt).format('h:mm a');
+    const liEl = $('<li></li>').text(`${msg.from} ${formattedTime} :`);
     const aEl  = $('<a target="_blank">My current location</a>');
     aEl.attr('href',msg.url);
     liEl.append(aEl);
