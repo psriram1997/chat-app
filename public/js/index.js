@@ -7,6 +7,20 @@ socket.on('disconnect',function(){
     console.log('disconnected from server');
 });
 
+function scrollToBottom(){
+    const messages = $('#messageBox');
+    const newMessage = messages.children('li:last-child');
+    const newMessageHeight = newMessage.innerHeight();
+    const lastMessageHeight = newMessage.prev().innerHeight();
+    const scrollHeight = messages.prop('scrollHeight');
+    const clientHeight = messages.prop('clientHeight');
+    const scrollTop = messages.prop('scrollTop');
+    if(scrollHeight <= clientHeight + scrollTop + newMessageHeight + lastMessageHeight){
+        messages.scrollTop(scrollHeight);
+    }
+    
+}
+
 socket.on('newMessage', function(msg){
     const formattedTime = moment(msg.createdAt).format('h:mm a');
     var template = $('#message-template').html();
@@ -16,7 +30,7 @@ socket.on('newMessage', function(msg){
        text : msg.text 
     });
     $('#messageBox').append(rendered);
-
+    scrollToBottom();
     
     // const liEl = $('<li></li>').text(`${msg.from} ${formattedTime} : ${msg.text}`);
     // $('#messageBox').append(liEl);
@@ -35,6 +49,7 @@ socket.on('newLocationMessage', function(msg){
     // aEl.attr('href',msg.url);
     // liEl.append(aEl);
     $('#messageBox').append(rendered);
+    scrollToBottom();
 });
 
 $('form').on('submit',function(e){
@@ -56,13 +71,12 @@ $('#location-button').on('click',function(e){
     e.target.disabled = true;
     e.target.innerText = "sending location...";
     navigator.geolocation.getCurrentPosition(function(position){
-        console.log(position.coords.latitude,position.coords.longitude);
         socket.emit('createLocationMessage',{
             from : 'User',
             latitude : position.coords.latitude,
             longitude : position.coords.longitude
         },function(){
-            console.log('create location event fired')
+   
         });
         
         e.target.disabled = false;
