@@ -9,17 +9,32 @@ socket.on('disconnect',function(){
 
 socket.on('newMessage', function(msg){
     const formattedTime = moment(msg.createdAt).format('h:mm a');
-    const liEl = $('<li></li>').text(`${msg.from} ${formattedTime} : ${msg.text}`);
-    $('#messageBox').append(liEl);
+    var template = $('#message-template').html();
+    var rendered = Mustache.render(template,{
+       from : msg.from,
+       createdAt : formattedTime,
+       text : msg.text 
+    });
+    $('#messageBox').append(rendered);
+
+    
+    // const liEl = $('<li></li>').text(`${msg.from} ${formattedTime} : ${msg.text}`);
+    // $('#messageBox').append(liEl);
 });
 
 socket.on('newLocationMessage', function(msg){
     const formattedTime = moment(msg.createdAt).format('h:mm a');
-    const liEl = $('<li></li>').text(`${msg.from} ${formattedTime} :`);
-    const aEl  = $('<a target="_blank">My current location</a>');
-    aEl.attr('href',msg.url);
-    liEl.append(aEl);
-    $('#messageBox').append(liEl);
+    const template = $('#location-message-template').html();
+    const rendered = Mustache.render(template,{
+       from : msg.from ,
+       createdAt : formattedTime,
+        url : msg.url
+    });
+    // const liEl = $('<li></li>').text(`${msg.from} ${formattedTime} :`);
+    // const aEl  = $('<a target="_blank">My current location</a>');
+    // aEl.attr('href',msg.url);
+    // liEl.append(aEl);
+    $('#messageBox').append(rendered);
 });
 
 $('form').on('submit',function(e){
