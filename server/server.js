@@ -22,6 +22,7 @@ io.on('connection',(socket)=>{
 
     socket.on('createMessage', function(message,callback){
         callback();
+        console.log("Message is : ", message.text);
         io.emit('newMessage',generateMessage(message.from,message.text));
     });
 
